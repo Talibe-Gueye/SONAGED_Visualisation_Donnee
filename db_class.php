@@ -7,10 +7,23 @@ class Db_Class{
     //     $sql = "INSERT INTO PUBLIC.".$this->table_name."(name,email,mobile_no,address) "."VALUES('".$this->cleanData($_POST['name'])."','".$this->cleanData($_POST['email'])."','".$this->cleanData($_POST['mobileno'])."','".$this->cleanData($_POST['address'])."')";
     //     return pg_affected_rows(pg_query($sql));
     // }
-
+   
     // recuperer toutes les donnees en fonction de la base
     function getCircuit(){             
         $sql ="select *from public." .$this->cleanData($_POST['circuit']). "  where coordinati='".$this->cleanData($_POST['select'])."'";
+        return pg_query($sql);
+    }
+
+    // recuperer une table en format geojson
+    function getTableJson(){
+        $sql="SELECT 'FeatureCollection' As type, array_to_json(array_agg(f))
+        As features FROM 
+        (SELECT
+        'Feature' As type,
+        ST_AsGeoJSON((lg.geom),15,0)::json As geometry,
+        row_to_json((id, nom,coordinati,longueur)) As properties
+        FROM public.".$this->cleanData($_POST['circuit'])." As lg WHERE lg.coordinati='".$this->cleanData($_POST['select'])."') As f"
+        ;
         return pg_query($sql);
     }
 
