@@ -14,6 +14,12 @@ class Db_Class{
         return pg_query($sql);
     }
 
+    // recuperer le nombre de circuit 
+    function getCircuitNumber(){             
+        $sql ="select count(*) from public." .$this->cleanData($_POST['circuit']). "  where coordinati='".$this->cleanData($_POST['select'])."'";
+        return pg_query($sql);
+    }
+
     // recuperer une table en format geojson
     function getTableJson(){
         $sql="SELECT 'FeatureCollection' As type, array_to_json(array_agg(f))
@@ -34,10 +40,10 @@ class Db_Class{
     }
 
     // recuperer toutes les donnees
-    function getAllCirBal(){             
+    function getAllCirBal(){ 
         $sql ="select *from public." . $this->table_name . "  ORDER BY id DESC";
         return pg_query($sql);
-    } 
+    }
 
     // recuperer par coordination
     function findByCoordination(){             
@@ -71,4 +77,3 @@ class Db_Class{
          return pg_escape_string($val);
     }
 }
-?>
