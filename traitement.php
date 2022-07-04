@@ -1,6 +1,7 @@
 <?php
 include('header.php');
 if (isset($_POST['select'])) {
+  $circuit=$_POST['circuit'];
   $nbCircuit = $obj->getGeom();
   $geom = $obj->getTableJson();
   $cdn = $obj->findByCoordination();
@@ -43,6 +44,8 @@ if (isset($_POST['select'])) {
     attribution: '© OpenStreetMap'
   }).addTo(map);
 
+  // type de balayage
+  var circuitJS = <?php echo json_encode($circuit); ?>;
   // Add geojson vector layer
   var data = <?php echo json_encode($geojson); ?>;
   // style du texte sur popup
@@ -52,14 +55,36 @@ if (isset($_POST['select'])) {
     "opacity": 0.65,
     "size": 15,
   };
+  // test de changement de couleur des circuits
+  var myLayer = L.geoJSON(data, {
+    style: function(layer) {
+        switch (circuitJS) {
+            case 'balayage_globale_dk': return {color: "#0510C5 ",opacity: 0.85};
+            case 'collecte_globale_dk':   return {color: "#050404",opacity: 0.85};
+        }
+    }
+}).addTo(map);
+  myLayer.bindPopup(function(layer) {
+  return "<h4>Circuit " + layer.feature.properties.f2 + "<p>Longueur: " + layer.feature.properties.f4 + " métres</p></h4>";
+  });
+  // Control Layer
+  var baseLayers = {
+    "Base Map": myLayer
+};
+var controlLayer = L.control.layers(baseLayers).addTo(map);
+// echelle
+L.control.scale().addTo(map);
+
+
+  // fin test de circuit
 
   // var dataArray = Object.entries(data);
-  var myLayer = L.geoJSON(data, {
-    style: myStyle
-  }).addTo(map);
-  // Lancer le popup
-  myLayer.bindPopup(function(layer) {
-    return "<h4>Circuit " + layer.feature.properties.f2 + "<p>Longueur: " + layer.feature.properties.f4 + " métres</p></h4>";
-  });
+  // var myLayer = L.geoJSON(data, {
+  //   style: myStyle
+  // }).addTo(map);
+  // // Lancer le popup
+  // myLayer.bindPopup(function(layer) {
+  //   return "<h4>Circuit " + layer.feature.properties.f2 + "<p>Longueur: " + layer.feature.properties.f4 + " métres</p></h4>";
+  // });
   // console.log(typeof(dataArray));
 </script>
