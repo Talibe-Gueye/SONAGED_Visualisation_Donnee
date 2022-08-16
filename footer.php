@@ -6,6 +6,5 @@
 <script type="text/javascript" src="plugin/leaflet.ajax.min.js"></script>
 <script type="text/javascript" src="plugin/leaflet.ajax.js"></script>
 
-
 </body>
 </html>

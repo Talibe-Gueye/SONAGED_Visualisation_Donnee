@@ -1,9 +1,15 @@
 <?php
 include('header.php');
-if (isset($_POST['select'])) {
+if (isset($_POST['submit'])) {
+  if(isset($_POST['com'])){
+  $geom = $obj->getTableJsonSS();
+  $nomCoordination=$_POST['com'];
+  }else{
+  $geom = $obj->getTableJson();
+  $nomCoordination=$_POST['coord'];
+  }
   $circuit=$_POST['circuit'];
   $nbCircuit = $obj->getGeom();
-  $geom = $obj->getTableJson();
   $cdn = $obj->findByCoordination();
   // geojson
   $features = [];
@@ -31,13 +37,13 @@ if (isset($_POST['select'])) {
 <div id="map"></div>
 
 <div class="md-10" style="width: 100%;background-color:#57A197;padding:5%;text-align:center;font-size:35px">
-  <p style="color: black;">La coordination de <span style="color: #0815B5 ;font-style: italic;"><?= $_POST['select'] ?></span> compte <span style="color: #0815B5;font-style: italic;"><?= $n ?></span> circuits</p>
+  <p style="color: black;">La coordination de <span style="color: #0815B5 ;font-style: italic;"><?= $nomCoordination ?></span> compte <span style="color: #0815B5;font-style: italic;"><?= $n ?></span> circuits</p>
 </div>
 <?php include('footer.php'); ?>
 
 <!-- script de leaflet -->
 <script>
-  var map = L.map('map').setView([14.764787, -17.415362], 12);
+  var map = L.map('map').setView([14.764787, -17.415362], 8);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -59,8 +65,8 @@ if (isset($_POST['select'])) {
   var myLayer = L.geoJSON(data, {
     style: function(layer) {
         switch (circuitJS) {
-            case 'balayage_globale_dk': return {color: "#0510C5 ",opacity: 0.85};
-            case 'collecte_globale_dk':   return {color: "#050404",opacity: 0.85};
+            case 'balayage': return {color: "#0510C5 ",opacity: 0.85};
+            case 'collecte':   return {color: "#050404",opacity: 0.85};
         }
     }
 }).addTo(map);
@@ -74,7 +80,6 @@ if (isset($_POST['select'])) {
 var controlLayer = L.control.layers(baseLayers).addTo(map);
 // echelle
 L.control.scale().addTo(map);
-
 
   // fin test de circuit
 
